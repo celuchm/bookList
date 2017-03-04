@@ -50,10 +50,12 @@ class User {
     
     public function login($username, $password){
 
-        if($this->ifUserExist($username, $password)){
-            Session::setSession('userLogged', $username);
-            Session::setSession('logginSuccess', true);
-            return true;
+        if($this->ifUserExist($username)){
+            if($this->passwordMatch($username, $password)){
+                Session::setSession('userLogged', $username);
+                Session::setSession('logginSuccess', true);
+                return true;
+            }            
         } else {
             Session::setSession('logginSuccess', false);
             return false;
@@ -72,17 +74,43 @@ class User {
         }       
       
         if(!$this->ifUserExist($username)){
-            $this->db->doDbAction('insert','users', array('username' => $username, 'password' => $password));
+            $salt = $this->createSalt();
+            $hashPassword = hash('sha256', $password.$salt);
+            //echo $hashPassword;
+            $this->db->doDbAction('insert','users', array('username' => $username, 'password' => $hashPassword, 'salt' => $salt));
             $this->registerError = array();
             return true;
         }      
     }
    
-    public function ifUserExist($username, $password = ""){
-        $this->db->doDbAction('select','users', array('username' => $username));
-        if($this->db->get_count()){
+    public function ifUserExist($username, $password = ""){        
+        $userData = $this->db->doDbAction('select','users', array('username' => $username));      
+               
+        if($userData->get_count()){
             return true;
         } 
         return false;      
     }    
+    
+    private function getSalt($username){
+        return $this->db->doDbAction('select','users',array('username' => $username))->get_first_row()['salt'];
+    }
+    
+    private function passwordMatch($username, $password){
+        $salt = $this->getSalt($username);
+        $ifUserWithPasswordExist = $this->db->doDbAction('select', 'users', array(
+            'username' => $username,
+            'password' => hash('sha256', $password.$salt)
+        ));
+        if($ifUserWithPasswordExist->get_count()){
+            return true;
+        }
+        return false;        
+    }
+    
+    
+    private function createSalt(){
+        return uniqid();
+    }
+       
 }

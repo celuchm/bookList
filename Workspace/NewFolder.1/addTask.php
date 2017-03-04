@@ -1,5 +1,6 @@
 <?php
 require_once 'init/init.php';
+require_once 'htmlComponents/header.php';
 if(!Session::checkSession('userLogged')){
     header('location: index.php');
 } else {
@@ -32,6 +33,8 @@ if(isset($_POST['taskName']) && isset($_POST['taskDate']) && isset($_POST['text'
          
          $userTasks = new TaskList($user);
          $userTasks->addTask($userTasks->get_userId(), $_POST['taskName'], $_POST['text'], $_POST['taskDate']);
+         //$userTasks->addTask($userTasks->get_userId(), $_POST['taskName'], $_POST['text'], "STR_TO_DATE('".$_POST['taskDate']."', '%d-%m-%Y')");
+         
          
          header('location:index.php');
          
@@ -56,7 +59,8 @@ if(isset($_POST['taskName']) && isset($_POST['taskDate']) && isset($_POST['text'
         <label for=="taskName"> task name
         <input type="text" name="taskName"></br>
         <label for="taskDate"> task expiration
-        <input type="date" name="taskDate"></br>
+        <input type="date" id="datepicker" name="taskDate"></br>        
+
         <textarea rows="4" cols="50" name="text"></textarea>
         <input type="submit" value="add">
 </form>

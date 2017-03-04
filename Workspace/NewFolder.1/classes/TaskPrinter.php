@@ -12,6 +12,7 @@ class TaskPrinter {
         echo '<div class="col-md-4">'.$taskText.'</div>'. PHP_EOL;
         echo '<div class="col-md-2">';
         $this->printEditLink($taskId);
+        echo " | ";
         $this->printDeleteLink($taskId);
         echo '</div></div>';
     }

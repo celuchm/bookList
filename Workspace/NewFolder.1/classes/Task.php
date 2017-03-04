@@ -51,12 +51,10 @@ class Task {
         }
                        
     }
-
-
-
     
-    
-            
+    public function deleteTask(){
+        $this->db->doDbAction('delete', 'user_task', array('id' => $this->getTaskId()));        
+    }            
     
     
     

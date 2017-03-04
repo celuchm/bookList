@@ -36,7 +36,9 @@ class Db {
       
     public function doDbAction($type, $table, $sqlConditions, $updateArray = null){
                
-        $sql = $this->prepareSql($type, $table, $sqlConditions, $updateArray);     
+        $sql = $this->prepareSql($type, $table, $sqlConditions, $updateArray);  
+        //echo $sql;
+        //print_r($sqlConditions);
         $preparedQuery = $this->prepareQuery($sql, array_values($sqlConditions));
         $this->executePreparedQuery($preparedQuery);
         return $this;
@@ -60,6 +62,10 @@ class Db {
         
             case 'update':
                 $sql = $this->getUpdateSql($table, $sqlConditionColumns, $sqlConditionValues, $updateArray);
+            break;
+        
+            case 'delete':
+                $sql = $this->getDeleteSql($table, $sqlConditionColumns, $sqlConditionValues);
             break;
         }
         return $sql;        
@@ -112,6 +118,19 @@ class Db {
             return "update {$table} set {$sqlColumnsUpdateString} where {$sqlConditionString}";  
                 
         
+    }
+    
+    private function getDeleteSql($table, $sqlConditionColumns, $sqlConditionValues){
+        
+        $countWhereConditions = count($sqlConditionColumns);
+        $sqlConditionString = "";
+            for($i=0;$i<$countWhereConditions;$i++){
+              $sqlConditionString .= $sqlConditionColumns[$i]." = ? ";
+              if($i<$countWhereConditions-1) {
+                  $sqlConditionString .= "and ";
+              }
+            }
+            return "delete from {$table} where {$sqlConditionString}";  
     }
     
     private function prepareQuery($sql, $bindValues){        
