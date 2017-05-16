@@ -8,14 +8,10 @@
 
 require_once(__DIR__."/config/init.php");
 
-$db = db::getInstance();
-
-$harry = new Book(2);
-var_dump($harry);
-$harry->setYear(1999);
-var_dump($harry);
-$harry->saveBookToDb();
-var_dump($harry);
+//var_dump( Book::loadAllBooks() );
+//$newBook = new Book(1);
+//$jsonData = json_encode($newBook);
+//var_dump($jsonData);
 //$sql = "select id, login from test where id=1 and mail='mama' order by id desc";
 
 //$result = $db->pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
@@ -97,3 +93,38 @@ $db->query("delete","users", array("where" => array("id" => 6)), null);
        );
 
 */
+
+
+?>
+
+
+<html>
+    <head>
+        <link rel="stylesheet" href="css/style.css" type="text/css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://unpkg.com/vue"></script>
+        <script src="js/booksApi.js" type="text/javascript"></script>
+
+
+    </head>
+    <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <ul id="app">
+                    <li v-for="book in allBooks">
+                        tytuł: {{ book.title }}, autor: {{ book.author }}
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+
+    </body>
+</html>

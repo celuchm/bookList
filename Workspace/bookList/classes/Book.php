@@ -6,7 +6,7 @@
  * Date: 14.05.17
  * Time: 20:45
  */
-class Book {
+class Book implements JsonSerializable {
     private $id,
             $title,
             $author,
@@ -15,14 +15,6 @@ class Book {
 
     public $db;
 
-    /**
-     * Book constructor.
-     * @param $id
-     * @param $title
-     * @param $author
-     * @param $year
-     * @param $publisher
-     */
     public function __construct($id = null)
     {
         $this->db = db::getInstance();
@@ -61,6 +53,20 @@ class Book {
             ),
                 "where"     =>array(array("id", "=", $this->getId()))), null);
         }
+    }
+
+    public static function loadAllBooks(){
+        $db = db::getInstance();
+        $allBooksArray = [];
+        if(  $allBooksId = $db->query("select", "Book", array("columns" => array("id")), null)->getResult() ){
+            for( $i=0; $i<count($allBooksId); $i++ ){
+                $allBooksArray[] = new Book($allBooksId[$i]->id);
+            }
+        } else {
+            var_dump( $db->getErrors() );
+            die();
+        }
+        return $allBooksArray;
     }
 
 
@@ -155,7 +161,14 @@ class Book {
     }
 
 
-
-
-
+    function jsonSerialize()
+    {
+        return[
+            'title'=>$this->getTitle(),
+            'author'=>$this->getAuthor(),
+            'year'=>$this->getYear(),
+            'publisher'=>$this->getPublisher(),
+            'id'=>$this->getId()
+        ];
+    }
 }
